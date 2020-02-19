@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="api_key">Your api key</string>
+    <string name="base_url">Api base url</string>
+</resources>
