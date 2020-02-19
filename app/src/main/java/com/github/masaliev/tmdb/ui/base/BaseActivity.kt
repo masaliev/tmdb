@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.github.masaliev.tmdb.App
+import com.github.masaliev.tmdb.BR
 
 @SuppressLint("Registered")
 abstract class BaseActivity<V : ViewDataBinding, P : MvpPresenter<*>> : AppCompatActivity() {
@@ -18,23 +19,10 @@ abstract class BaseActivity<V : ViewDataBinding, P : MvpPresenter<*>> : AppCompa
         private set
     private var mPresenter: P? = null
 
-    /**
-     * Override for set view model
-     *
-     * @return view model instance
-     */
     abstract fun getPresenter(): P
 
-    /**
-     * Override for set binding variable
-     *
-     * @return variable id
-     */
-    abstract fun getBindingVariable(): Int
+    open fun getBindingVariable(): Int = BR.presenter
 
-    /**
-     * @return layout resource id
-     */
     @LayoutRes
     abstract fun getLayoutId(): Int
 

@@ -3,7 +3,9 @@ package com.github.masaliev.tmdb
 import android.app.Application
 import android.content.Context
 import com.github.masaliev.tmdb.di.AppComponent
+import com.github.masaliev.tmdb.di.DaggerAppComponent
 import com.github.masaliev.tmdb.di.modules.AppModule
+import com.github.masaliev.tmdb.di.modules.NetworkModule
 import com.github.masaliev.tmdb.ui.movie.list.di.MovieListComponent
 
 
@@ -24,6 +26,12 @@ class App : Application() {
     private fun prepareAppComponent(): AppComponent {
         return DaggerAppComponent.builder()
             .appModule(AppModule(this))
+            .networkModule(
+                NetworkModule(
+                    getString(R.string.api_base_url),
+                    getString(R.string.api_key)
+                )
+            )
             .build()
     }
 
