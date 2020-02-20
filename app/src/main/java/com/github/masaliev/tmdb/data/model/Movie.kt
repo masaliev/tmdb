@@ -13,6 +13,7 @@ data class Movie(
     @Expose val title: String,
     @Expose @SerializedName("release_date") val releaseDate: Date,
     @Expose @SerializedName("overview") val overview: String,
-    @Expose @SerializedName("poster_path") val posterPath: String,
+    @Expose @SerializedName("poster_path") val posterPath: String?,
+    @Expose @SerializedName("backdrop_path") val backdropPath: String?,
     var isLiked: Boolean = false
 ) : Serializable

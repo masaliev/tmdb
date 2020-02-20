@@ -1,12 +1,19 @@
 package com.github.masaliev.tmdb.ui.movie.list
 
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.View
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.masaliev.tmdb.App
 import com.github.masaliev.tmdb.R
 import com.github.masaliev.tmdb.data.model.Movie
 import com.github.masaliev.tmdb.databinding.ActivityMovieListBinding
 import com.github.masaliev.tmdb.ui.base.BaseActivity
+import com.github.masaliev.tmdb.utils.views.EndlessRecyclerViewScrollListener
+import com.github.masaliev.tmdb.utils.views.RecyclerViewItemPaddingDecorator
 import javax.inject.Inject
 
 class MovieListActivity : BaseActivity<ActivityMovieListBinding, MovieListPresenter>(),
@@ -14,6 +21,9 @@ class MovieListActivity : BaseActivity<ActivityMovieListBinding, MovieListPresen
 
     @Inject
     lateinit var mPresenter: MovieListPresenter
+
+    @Inject
+    lateinit var mAdapter: MovieAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,9 +36,40 @@ class MovieListActivity : BaseActivity<ActivityMovieListBinding, MovieListPresen
     }
 
     private fun initViews() {
-        //@TODO set up recycler view
-        //Use GridLayoutManager
-        //Set column according to Activity.getResources().getConfiguration().orientation
+
+        mAdapter.onItemClickListener = object : MovieAdapter.OnItemClickListener {
+            override fun onClick(post: Movie) {
+                //@TODO open movie details page
+            }
+        }
+
+        val layoutManager: RecyclerView.LayoutManager =
+            if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            } else {
+                GridLayoutManager(this, 2)
+            }
+
+        viewDataBinding.recyclerView.apply {
+            this.layoutManager = layoutManager
+            addItemDecoration(
+                RecyclerViewItemPaddingDecorator(
+                    (8 * resources.displayMetrics.density).toInt(), //8dp in pixels
+                    null
+                )
+            )
+            adapter = mAdapter
+            addOnScrollListener(
+                object : EndlessRecyclerViewScrollListener(
+                    layoutManager,
+                    2
+                ) {
+                    override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
+                        mPresenter.fetchNextPage()
+                    }
+                }
+            )
+        }
     }
 
     override fun getPresenter(): MovieListPresenter = mPresenter
@@ -45,23 +86,37 @@ class MovieListActivity : BaseActivity<ActivityMovieListBinding, MovieListPresen
     }
 
     override fun showLoading() {
-        //@TODO if adapter items size is zero, then change visibility of viewDataBinding.progress,
-        // otherwise add loading item to adapter
+        if (mAdapter.itemCount == 0) {
+            viewDataBinding.progress.visibility = View.VISIBLE
+            viewDataBinding.recyclerView.visibility = View.GONE
+        } else {
+            mAdapter.setLoading()
+        }
     }
 
     override fun hideLoading() {
         viewDataBinding.progress.visibility = View.GONE
-        //@TODO hide loading item in adapter
+        mAdapter.setLoading(false)
     }
 
     override fun populateMovies(movies: List<Movie>) {
-        //@TODO set items to adapter
-        //Check adapter items size
+        mAdapter.setItems(movies)
+        checkMovieCount()
     }
 
     override fun addMovies(movies: List<Movie>) {
-        //@TODO add items to adapter
-        //Check adapter items size
+        mAdapter.addItems(movies)
+        checkMovieCount()
+    }
+
+    private fun checkMovieCount() {
+        if (mAdapter.itemCount == 0) {
+            viewDataBinding.emptyResult.visibility = View.VISIBLE
+            viewDataBinding.recyclerView.visibility = View.GONE
+        } else {
+            viewDataBinding.emptyResult.visibility = View.GONE
+            viewDataBinding.recyclerView.visibility = View.VISIBLE
+        }
     }
 
 }
