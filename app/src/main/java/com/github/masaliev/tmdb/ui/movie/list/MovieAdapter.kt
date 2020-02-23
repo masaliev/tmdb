@@ -41,6 +41,6 @@ class MovieAdapter : BaseLoadMoreAdapter<Movie>() {
     }
 
     interface OnItemClickListener {
-        fun onClick(post: Movie)
+        fun onClick(movie: Movie)
     }
 }

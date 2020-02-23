@@ -16,6 +16,7 @@ import com.github.masaliev.tmdb.R
 import com.github.masaliev.tmdb.data.model.Movie
 import com.github.masaliev.tmdb.databinding.ActivityMovieListBinding
 import com.github.masaliev.tmdb.ui.base.BaseActivity
+import com.github.masaliev.tmdb.ui.movie.details.MovieDetailsActivity
 import com.github.masaliev.tmdb.utils.views.EndlessRecyclerViewScrollListener
 import com.github.masaliev.tmdb.utils.views.RecyclerViewItemPaddingDecorator
 import javax.inject.Inject
@@ -42,8 +43,8 @@ class MovieListActivity : BaseActivity<ActivityMovieListBinding, MovieListContra
     private fun initViews() {
 
         mAdapter.onItemClickListener = object : MovieAdapter.OnItemClickListener {
-            override fun onClick(post: Movie) {
-                //@TODO open movie details page
+            override fun onClick(movie: Movie) {
+                startActivity(MovieDetailsActivity.getStartIntent(this@MovieListActivity, movie.id))
             }
         }
 
@@ -75,7 +76,7 @@ class MovieListActivity : BaseActivity<ActivityMovieListBinding, MovieListContra
             )
         }
 
-        if(mAdapter.itemCount > 0){
+        if (mAdapter.itemCount > 0) {
             viewDataBinding.recyclerView.visibility = View.VISIBLE
         }
     }

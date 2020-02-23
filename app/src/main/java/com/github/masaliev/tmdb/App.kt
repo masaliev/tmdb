@@ -6,6 +6,7 @@ import com.github.masaliev.tmdb.di.AppComponent
 import com.github.masaliev.tmdb.di.DaggerAppComponent
 import com.github.masaliev.tmdb.di.modules.AppModule
 import com.github.masaliev.tmdb.di.modules.NetworkModule
+import com.github.masaliev.tmdb.ui.movie.details.di.MovieDetailsComponent
 import com.github.masaliev.tmdb.ui.movie.list.di.MovieListComponent
 
 
@@ -15,6 +16,8 @@ class App : Application() {
         private set
 
     private var mMovieListComponent: MovieListComponent? = null
+
+    private var mMovieDetailsComponent: MovieDetailsComponent? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -43,6 +46,16 @@ class App : Application() {
 
     fun clearMovieListComponent() {
         mMovieListComponent = null
+    }
+
+    fun getMovieDetailsComponent(): MovieDetailsComponent {
+        return mMovieDetailsComponent ?: component.plusMovieDetailsComponent().also {
+            mMovieDetailsComponent = it
+        }
+    }
+
+    fun clearMovieDetailsComponent() {
+        mMovieDetailsComponent = null
     }
 
     companion object {

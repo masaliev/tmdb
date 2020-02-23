@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="presenter"
+            type="com.github.masaliev.tmdb.ui.movie.details.MovieDetailsContract.Presenter" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <ImageView
+                    android:id="@+id/image"
+                    image="@{presenter.movie.posterPath}"
+                    android:layout_width="200dp"
+                    android:layout_height="300dp"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/film_poster_placeholder" />
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_toEndOf="@+id/image"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@{presenter.movie.title}"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    tools:text="Terminator" />
+
+                <TextView
+                    android:id="@+id/voteAverage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/title"
+                    android:layout_alignStart="@+id/title"
+                    android:text="@{@string/vote_average(presenter.movie.voteAverage)}"
+                    tools:text="Vote average: 8.6" />
+
+                <TextView
+                    android:id="@+id/voteCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/voteAverage"
+                    android:layout_alignStart="@+id/title"
+                    android:text="@{@string/vote_count(presenter.movie.voteCount)}"
+                    tools:text="Vote count: 86" />
+
+
+                <TextView
+                    android:id="@+id/overview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/image"
+                    android:padding="16dp"
+                    android:text="@{presenter.movie.overview}"
+                    tools:text="This program recounts the life of scientist, inventor, and visionary Nikola Tesla, often remembered as more of an eccentric cult figure than an electrical engineering genius. Many of his achievements are still attributed to contemporaries Thomas Edison and Guglielmo Marconi. Tesla's surprising inventions are revealed in his autobiographical and scientific writings, supplemented by rare photographs and re-creations." />
+
+            </RelativeLayout>
+        </androidx.core.widget.NestedScrollView>
+    </RelativeLayout>
+</layout>
