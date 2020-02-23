@@ -8,11 +8,14 @@ interface MovieListContract {
     interface View : MvpView {
         fun showLoading()
         fun hideLoading()
+        fun clearMovies()
         fun populateMovies(movies: List<Movie>)
         fun addMovies(movies: List<Movie>)
     }
 
     interface Presenter : MvpPresenter<View> {
         fun fetchNextPage()
+        fun publishSearchQuery(query: String)
+        fun getSavedQuery() : String
     }
 }

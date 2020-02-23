@@ -1,9 +1,13 @@
 package com.github.masaliev.tmdb.ui.movie.list
 
+import android.app.SearchManager
+import android.content.Context
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,11 +20,11 @@ import com.github.masaliev.tmdb.utils.views.EndlessRecyclerViewScrollListener
 import com.github.masaliev.tmdb.utils.views.RecyclerViewItemPaddingDecorator
 import javax.inject.Inject
 
-class MovieListActivity : BaseActivity<ActivityMovieListBinding, MovieListPresenter>(),
+class MovieListActivity : BaseActivity<ActivityMovieListBinding, MovieListContract.Presenter>(),
     MovieListContract.View {
 
     @Inject
-    lateinit var mPresenter: MovieListPresenter
+    lateinit var mPresenter: MovieListContract.Presenter
 
     @Inject
     lateinit var mAdapter: MovieAdapter
@@ -70,9 +74,52 @@ class MovieListActivity : BaseActivity<ActivityMovieListBinding, MovieListPresen
                 }
             )
         }
+
+        if(mAdapter.itemCount > 0){
+            viewDataBinding.recyclerView.visibility = View.VISIBLE
+        }
     }
 
-    override fun getPresenter(): MovieListPresenter = mPresenter
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menu?.let {
+            menuInflater.inflate(R.menu.menu_movie_list, it)
+
+            // Associate searchable configuration with the SearchView
+            val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+            val searchView = it.findItem(R.id.action_search).actionView as SearchView
+
+            searchView.setQuery(mPresenter.getSavedQuery(), true)
+
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            searchView.maxWidth = Integer.MAX_VALUE
+            searchView.queryHint = getString(R.string.search)
+
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?) = false
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    mPresenter.publishSearchQuery(newText ?: "")
+                    return true
+                }
+
+            })
+
+
+        }
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        val id = item?.itemId
+
+        //noinspection SimplifiableIfStatement
+        return if (id == R.id.action_search) {
+            true
+        } else super.onOptionsItemSelected(item)
+
+    }
+
+    override fun getPresenter(): MovieListContract.Presenter = mPresenter
 
 
     override fun getLayoutId(): Int = R.layout.activity_movie_list
@@ -97,6 +144,10 @@ class MovieListActivity : BaseActivity<ActivityMovieListBinding, MovieListPresen
     override fun hideLoading() {
         viewDataBinding.progress.visibility = View.GONE
         mAdapter.setLoading(false)
+    }
+
+    override fun clearMovies() {
+        mAdapter.setItems(null)
     }
 
     override fun populateMovies(movies: List<Movie>) {
