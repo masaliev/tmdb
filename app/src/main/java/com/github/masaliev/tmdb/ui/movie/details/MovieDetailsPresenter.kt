@@ -60,6 +60,7 @@ class MovieDetailsPresenter(
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .subscribe({
+                    movieObservableField.get()?.isLiked = true
                     view.isLiked(true)
                 }, { throwable ->
                     //@TODO handle exception
@@ -73,6 +74,7 @@ class MovieDetailsPresenter(
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .subscribe({
+                    movieObservableField.get()?.isLiked = false
                     view.isLiked(false)
                 }, { throwable ->
                     //@TODO handle exception
